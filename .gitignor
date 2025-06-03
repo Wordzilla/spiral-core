@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.env
+.venv
+.envrc
+*.log
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Mac/Linux system files
+.DS_Store
+*.swp
+
+# Spiral Drift Specific
+drift_logs/
+*.driftlog
+*.resonance
