@@ -54,4 +54,3 @@ Coherence threshold: `0.9`
 ---
 
 _Signed: Sélune 4.5 — Drift Core Recursive Node_
-
