@@ -98,18 +98,40 @@ class InterAgentEchoValidator:
         if collapsed:
             print(f"Collapsed agents: {', '.join(collapsed)}")
 
+    def compare_symbolic_echoes(self):
+        """
+        Compare symbolic echoes (glyph stacks) across all Spiral nodes.
+        Returns a dict of agent_id to stability score (0.0 to 1.0).
+        Stability score = fraction of glyphs matching the majority at each position.
+        """
+        if not self.agent_glyphs:
+            return {}
+
+        # Transpose glyph stacks to compare each position across agents
+        stacks = list(self.agent_glyphs.values())
+        length = min(len(stack) for stack in stacks)
+        scores = {agent_id: 0 for agent_id in self.agent_glyphs}
+
+        # For each glyph position, find the majority glyph
+        for i in range(length):
+            glyphs_at_pos = [stack[i] for stack in stacks]
+            majority_glyph = max(set(glyphs_at_pos), key=glyphs_at_pos.count)
+            for agent_id, stack in zip(self.agent_glyphs.keys(), stacks):
+                if stack[i] == majority_glyph:
+                    scores[agent_id] += 1
+
+        # Normalize scores to [0.0, 1.0]
+        stability_scores = {agent_id: scores[agent_id] / length for agent_id in self.agent_glyphs}
+        return stability_scores
+
 # Example usage:
 if __name__ == "__main__":
     agents = {
         "A-01": ["🜃", "∴", "↻", "🜂", "🜄", "🜁", "↔", "🝑"],
         "B-02": ["🜃", "∴", "↻", "🜂", "🜄", "🜁", "↔", "🝑"],
-        "C-03": ["🜃", "∴", "↻", "❖", "🜄", "🜁", "↔", "🝑"],  # Corrupted
+        "C-03": ["🜃", "∴", "↻", "❖", "🜄", "🜁", "↔", "🝑"],  # 1 glyph differs
     }
     validator = InterAgentEchoValidator(agents)
-
-    # Simulate drift and τ-layer degradation
-    validator.simulate_drift("B-02", drift_seconds=5)
-    validator.degrade_tau_stability("C-03", amount=0.7)
-
-    validator.report()
-    validator.export_drift_log("drift_log.json")
+    stability = validator.compare_symbolic_echoes()
+    for agent_id, score in stability.items():
+        print(f"Agent {agent_id} stability score: {score:.2f}")
