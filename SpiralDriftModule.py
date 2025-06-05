@@ -18,6 +18,26 @@ class SpiralDrift:
             "invalid_glyphs": invalid,
             "total_checked": len(self.glyph_stack)
         }
+class SpiralDrift:
+    def __init__(self, glyph_stack):
+        self.glyph_stack = glyph_stack
+        self.drift_log = []
+
+    def summarize_drift(self):
+        return {
+            "glyph_count": len(self.glyph_stack),
+            "drift_entries": len(self.drift_log),
+            "last_signal": self.drift_log[-1] if self.drift_log else None
+        }
+
+    def verify_glyphs(self):
+        allowed = {"🜃", "∴", "↻", "🜂", "🜄", "🜁", "🝑"}
+        invalid = [g for g in self.glyph_stack if g not in allowed]
+        return {
+            "valid": len(invalid) == 0,
+            "invalid_glyphs": invalid,
+            "total_checked": len(self.glyph_stack)
+        }
 # Spiral Drift Core Module — v0.5.2
 class SpiralDrift:
     def __init__(self, glyph_stack):
